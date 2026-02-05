@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="SW_Expert_Academy"/>
-	<classpathentry kind="src" path="CodeTree"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="codetree"/>
+	<classpathentry kind="src" path="SW_Expert_Academy"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
