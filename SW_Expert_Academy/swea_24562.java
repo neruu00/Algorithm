@@ -1,5 +1,3 @@
-package offline;
-
 import java.util.Scanner;
 
 public class swea_24562 {

@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
  
-public class Solution {
+public class swea_6808 {
     static int win = 0, lose = 0;
     static int[] kCards = new int[9];
     static int[] iCards = new int[9];
