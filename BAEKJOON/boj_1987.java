@@ -7,17 +7,17 @@ public class boj_1987 {
 	static char map[][];
 	
 	static void dfs(int r, int c, int count, int visited) {
-		if((visited & 1<<map[r][c]-'A') != 0) {
+		if(r < 0 || r >= R || c < 0 || c >= C || ((visited & 1<<map[r][c]-'A') != 0)) {
 			ans = Math.max(ans, count);
 			return;
 		}
 		
 		int nextVisited = visited | 1<<map[r][c]-'A';
 		
-		if(r > 0) dfs(r-1, c, count+1, nextVisited);
-		if(r+1 < R) dfs(r+1, c, count+1, nextVisited);
-		if(c > 0) dfs(c-1, c, count+1, nextVisited);
-		if(c+1 < C) dfs(c+1, c, count+1, nextVisited);
+		dfs(r-1, c, count+1, nextVisited);
+		dfs(r+1, c, count+1, nextVisited);
+		dfs(r, c-1, count+1, nextVisited);
+		dfs(r, c+1, count+1, nextVisited);
 	}
 	
 	public static void main(String[] args) throws Exception{
@@ -33,7 +33,7 @@ public class boj_1987 {
 			map[r] = br.readLine().toCharArray();
 		}
 		
-		dfs(0, 0, 1, 0);
+		dfs(0, 0, 0, 0);
 		
 		System.out.println(ans);
 	}
