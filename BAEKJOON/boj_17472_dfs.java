@@ -1,13 +1,15 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class boj_17472 {
+public class boj_17472_dfs {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringTokenizer st;
 	static int N, M, land, ans, map[][], markMap[][];
-	static boolean visited[];
 	static int bridges[][];
+	static boolean used[][];
 	static int dr[] = {-1, 0, 1, 0};
 	static int dc[] = {0, -1, 0, 1};
 	
@@ -39,32 +41,65 @@ public class boj_17472 {
 				
 				if(mark == n) break;
 				
-				if(mark != 0) {
-					if(dist < 2) break;
-					int min = bridges[n][mark] > 0 ? Math.min(bridges[n][mark], dist) : dist;
-					bridges[n][mark] = bridges[mark][n] = min;
+				if(mark == 0) continue;
+				
+				if(mark != 0 && dist < 2) break;
+				
+				int min = bridges[n][mark] > 0 ? Math.min(bridges[n][mark], dist) : dist;
+				bridges[n][mark] = bridges[mark][n] = min;
+				break;
+			}
+		}
+	}
+		
+	static void dfs(int depth, int dist) {
+		if(bfs()) {
+			ans = Math.min(ans, dist);
+			return;
+		}
+		
+		if(depth == land) return;
+			
+		for(int r = 1; r <= land; r++) {
+			for(int c = 1; c <= land; c++) {
+				if(r == c || used[r][c]) continue;
+				int nextDist = bridges[r][c];
+				if(nextDist > 0) {
+					used[r][c] = used[c][r] = true;
+					dfs(depth+1, dist+nextDist);
+					used[r][c] = used[c][r] = false;
 				}
 			}
 		}
 	}
 	
-	static void dfs(int mark, int depth, int dist) {
-		if(depth == land) {
-			ans = Math.min(ans, dist);
-			return;
-		}
+	static boolean bfs() {
+		boolean visited[] = new boolean[land+1];
+		Queue<Integer> queue = new ArrayDeque<Integer>();
 		
-		if(visited[mark]) return;
+		queue.offer(1);
+		visited[1] = true;
 		
-		for(int i = 1; i <= land; i++) {
-			int nextDist = bridges[mark][i];
-			if(nextDist > 0) {
-				visited[i] = true;
-				dfs(i, depth+1, dist+nextDist);
-				visited[i] = false;
+		while(!queue.isEmpty()) {
+			int tmp = queue.poll();
+			
+			for(int i = 1; i <= land; i++) {
+				if(!used[tmp][i]) continue;
+				if(visited[i]) continue;
+				int next = bridges[tmp][i];
+				if(next > 0) {
+					visited[i] = true;
+					queue.offer(i);
+				}
 			}
 		}
+		
+		for(int i = 1; i <= land; i++) {
+			if(!visited[i]) return false;
+		}
+		return true;
 	}
+
 	
 	public static void main(String[] args) throws Exception {
 		st = new StringTokenizer(br.readLine());
@@ -84,13 +119,14 @@ public class boj_17472 {
 		land = 0;
 		for(int r = 0; r < N; r++) {
 			for(int c = 0; c < M; c++) {
-				if(map[r][c] == 1 && markMap[r][c] == 0) {
+				if(map[r][c] == 1) {
 					marking(r, c, ++land);
 				}
 			}
 		}
 		
 		bridges = new int[land+1][land+1];
+		used = new boolean[land+1][land+1];
 		for(int r = 0; r < N; r++) {
 			for(int c = 0; c < M; c++) {
 				int mark = markMap[r][c];
@@ -98,7 +134,7 @@ public class boj_17472 {
 			}
 		}
 		
-		visited = new boolean[land+1];
+		dfs(0, 0);
 		
 		if(ans != Integer.MAX_VALUE) System.out.println(ans);
 		else System.out.println(-1);
