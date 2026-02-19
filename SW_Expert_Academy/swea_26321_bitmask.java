@@ -1,0 +1,74 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class swea_26321_bitmask {
+    static List<Unit> list;
+    static int N, count, ans;
+    
+    static class Unit {
+        int no, r, c;
+        Unit(int no, int r, int c) {
+            this.no = no;
+            this.r = r;
+            this.c = c;
+        }
+    }
+    
+    static void perm(int dist, int r, int c, int depth, int hunt, int visited) {
+        if(dist >= ans) return;
+        
+        if(depth == count) {
+            ans = Math.min(ans, dist);
+            return;
+        }
+        
+        for(int i = 0; i < list.size(); i++) {
+            if((visited & 1<<i) != 0) continue;
+            
+            Unit next = list.get(i);
+            if(next.no > 0) {
+                int nextDist = dist + Math.abs(next.r - r) + Math.abs(next.c - c);
+                perm(nextDist, next.r, next.c, depth+1, hunt | 1<<next.no, visited | 1<<i);
+            } else if((hunt & 1<<(-next.no)) != 0) {
+                int nextDist = dist + Math.abs(next.r - r) + Math.abs(next.c - c);
+                perm(nextDist, next.r, next.c, depth+1, hunt, visited | 1<<i);
+            }    
+        }
+    }
+    
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st;
+        
+        int T = Integer.parseInt(br.readLine());
+        
+        for(int tc = 1; tc <= T; tc++) {
+            sb.append('#').append(tc).append(' ');
+            
+            int N = Integer.parseInt(br.readLine());
+            
+            list = new ArrayList<Unit>();
+            count = 0;
+            
+            for(int r = 1; r <= N; r++) {
+                st = new StringTokenizer(br.readLine());
+                for(int c = 1; c <= N; c++) {
+                    int no = Integer.parseInt(st.nextToken());
+                    if(no != 0) {
+                        list.add(new Unit(no, r, c));
+                        count++;
+                    }
+                }
+            }
+            
+            ans = Integer.MAX_VALUE;
+            perm(0, 1, 1, 0, 0, 0);
+            sb.append(ans).append('\n');
+        }
+        System.out.println(sb);
+    }
+}
