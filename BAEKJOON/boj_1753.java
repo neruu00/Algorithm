@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 /**
  * 
- * 메모리: 126,804kb, 시간: 1,052ms
+ * 메모리: 121,244kb, 시간: 1,028ms
  *
  */
 
@@ -32,7 +32,6 @@ public class boj_1753 {
 		int start = Integer.parseInt(br.readLine()) - 1;
 		
 		Node list[] = new Node[V];
-		boolean visited[] = new boolean[V];
 		int[] minDist = new int[V];
 		PriorityQueue<int[]> pq = new PriorityQueue<>((a, b)->a[1]-b[1]);
 		
@@ -57,14 +56,11 @@ public class boj_1753 {
 			int cur = p[0];
 			int min = p[1]; 
 			
-			if(visited[cur] || min > minDist[cur]) continue;
-						
-			visited[cur] = true;
-			
+			if(min > minDist[cur]) continue;
+									
 			for(Node temp = list[cur]; temp != null; temp = temp.next) {
-				if(visited[temp.vertex] || min + temp.weight > minDist[temp.vertex]) continue;
-				minDist[temp.vertex] = min + temp.weight;
-				pq.offer(new int[]{temp.vertex, minDist[temp.vertex]});
+				if(min + temp.weight >= minDist[temp.vertex]) continue;
+				pq.offer(new int[]{temp.vertex, minDist[temp.vertex] = min + temp.weight});
 			}
 		}
 		

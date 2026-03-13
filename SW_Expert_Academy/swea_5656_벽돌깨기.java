@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
+import org.omg.CORBA.INTERNAL;
+
 public class swea_5656_벽돌깨기 {
 	static int N, W, H, ans;
 	static int grid[][][];
@@ -29,11 +31,8 @@ public class swea_5656_벽돌깨기 {
 				nc += dc[d];
 				
 				if(nr < 0 || nr >= H || nc < 0 || nc >= W) continue;
-				
-				int curr = grid[depth][nr][nc];
-				
-				if(curr == 0) continue;
-				else attack(depth, nr, nc);
+								
+				if(grid[depth][nr][nc] != 0) attack(depth, nr, nc);
 			}
 		}
 	}
@@ -104,10 +103,10 @@ public class swea_5656_벽돌깨기 {
 				st = new StringTokenizer(br.readLine());
 				for(int c = 0; c < W; c++) {
 					grid[0][r][c] = Integer.parseInt(st.nextToken());
-					if(grid[0][r][c] != 0) ans++;
 				}
 			}
 			
+			ans = Integer.MAX_VALUE;
 			simulate(1);
 			sb.append(ans).append('\n');
 		}
