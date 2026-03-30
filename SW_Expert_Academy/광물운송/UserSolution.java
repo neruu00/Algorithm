@@ -1,62 +1,43 @@
 package 광물운송;
 
 class UserSolution {
-	class BaseCamp {
-		int id, r, c, root, quantity;
-		BaseCamp(int id, int r, int c, int quantity) {
-			set(id, r, c, quantity);
-		}
-		
-		void set(int id, int r, int c, int quantity) {
-			this.id = id;
-			this.r = r;
-			this.c = c;
-			this.root = size;
-			this.quantity = quantity;
-		}
-	}
-	
 	int L, N, size;
-	BaseCamp camps[] = new BaseCamp[20000];
-	BaseCamp min = new BaseCamp(-1, 0, 0, Integer.MAX_VALUE);
-	BaseCamp campA, campB, tmp;
+	
+	int r[] = new int[20000];
+	int c[] = new int[20000];
+	int q[] = new int[20000];
+	int id[] = new int[20000];
+	
+	int parent[] = new int[20000];
+	int sum[] = new int[20000];
 
-	boolean isPriority(BaseCamp a, BaseCamp b) {
-		if((b.r == a.r) && (b.c < a.c)) return false;
-		else if (b.r < a.r) return false;
-		return true;
+	boolean isBetter(int a, int b) {
+		if(q[a] != q[b]) return q[a] < q[b];
+		if(r[a] != r[b]) return r[a] < r[b];
+		return c[a] < c[b];
 	}
 	
 	int findSet(int a) {
-		if(a == camps[a].root) return a;
-		camps[a].root = findSet(camps[a].root);
-		camps[a].quantity = camps[camps[a].root].quantity;
-		return camps[a].root;
+		int root = a;
+		while(root != parent[root]) {
+			root = parent[root];
+		}
+		return root;
 	}
 	
 	void union(int a, int b) {
-		int aRoot = findSet(a);
-		int bRoot = findSet(b);
+		int rootA = findSet(a);
+		int rootB = findSet(b);
 				
-		if(aRoot == bRoot) return;
-		
-		campA = camps[aRoot];
-		campB = camps[bRoot];
-		
-		int dist = Math.abs(camps[a].r - camps[b].r) + Math.abs(camps[a].c - camps[b].c);
-				
-		if(dist > L) return;
-		
-		if(!isPriority(campA, campB)) {
-			tmp = campA;
-			campA = campB;
-			campB = tmp;
+		if(rootA == rootB) return;
+								
+		if(isBetter(rootA, rootB)) {
+			parent[rootB] = rootA;
+			sum[rootA] += sum[rootB];
+		} else {
+			parent[rootA] = rootB;
+			sum[rootB] += sum[rootA];
 		}
-		
-		System.out.println("union" + a + ":" + aRoot + " " + b + ":" + bRoot);
-		
-		campB.root = aRoot;
-		campA.quantity += campB.quantity;
 	}
 
 	void init(int L, int N){
@@ -66,38 +47,31 @@ class UserSolution {
 	}
 	
 	int addBaseCamp(int mID, int mRow, int mCol, int mQuantity){
-		if(camps[size] == null) {
-			camps[size] = new BaseCamp(mID, mRow, mCol, mQuantity);
-		} else {
-			camps[size].set(mID, mRow, mCol, mQuantity);
+		int u = size++;
+		id[u] = mID;
+		r[u] = mRow;
+		c[u] = mCol;
+		q[u] = mQuantity;
+		parent[u] = u;
+		sum[u] = mQuantity;
+		
+		for(int i = 0; i < u; i++) {
+			if(Math.abs(r[i] - r[u]) + Math.abs(c[i] - c[u]) > L) continue;
+			union(i, u);
 		}
 		
-		for(int i = 0; i < size; i++) {
-			 union(i, size);
-		}
-		
-		for(int i = 0; i < size+1; i++) {
-			System.out.print(camps[i].root + " ");
-		}
-		System.out.println();
-		
-		return camps[findSet(size++)].quantity;
+		return sum[findSet(u)];
 	}
 	
 	int findBaseCampForDropping(int K){
-		min.id = -1;
-		min.quantity = Integer.MAX_VALUE;
+		int ans = -1;
 		
 		for(int i = 0; i < size; i++) {
-			tmp = camps[findSet(i)];
-			if(tmp.quantity < K) continue;
-			if(tmp.id == min.id) continue;
-			if(tmp.quantity > min.quantity) continue;
-			if(tmp.quantity == min.quantity && !isPriority(tmp, min)) continue;
-			min.set(tmp.id, tmp.r, tmp.c, tmp.quantity);
+			if(parent[i] != i || sum[i] < K) continue;
+			if(ans == -1 || isBetter(i, ans)) {
+				ans = i;
+			}
 		}
-		
-		return min.id;
+		return ans == -1 ? -1 : id[ans];
 	}
-
 }

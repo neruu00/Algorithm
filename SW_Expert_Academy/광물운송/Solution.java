@@ -30,7 +30,6 @@ class Solution {
                 int mQuantity = sc.nextInt();
                 int ret = usersolution.addBaseCamp(mID, mRow, mCol, mQuantity);
                 int ans = sc.nextInt();
-                System.out.println("#"+(q+1)+" add "+ans + " " + ret);
                 if (ans != ret) {
                     ok = false;
                 }
@@ -38,7 +37,6 @@ class Solution {
                 int K = sc.nextInt();
                 int ret = usersolution.findBaseCampForDropping(K);
                 int ans = sc.nextInt();
-                System.out.println("#"+(q+1)+" drop "+ans + " " + ret);
                 if (ans != ret) {
                     ok = false;
                 }
